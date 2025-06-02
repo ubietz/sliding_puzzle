@@ -58,6 +58,17 @@
         text-align: center;
         margin: auto;
     }
+    .pause {
+        width: 580px;
+        height: 100px;
+        background-color: #FFE0B5;
+        border: 20px solid #F8C794;
+        border-radius: 20px;
+        user-select: none;
+        display: block;
+        margin: auto;
+        margin-right: 620px;
+    }
   </style>
 </head>
 <body>
@@ -67,6 +78,7 @@
     <div class="timer">
         <h1 class="count" id="count">TIME:</h1>
     </div>
+    
 <div id="grid">
 
   <div></div><div></div><div></div><div></div><div></div>
@@ -76,6 +88,11 @@
   <div></div><div></div><div></div><div></div><div></div>
 </div>
 </div>
+<br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+<div class="pause" id="pause">
+        <h1 class="text">PAUSE</h1>
+    </div>
 <script>
 
   function createUniqueRandomGenerator(min, max) {
@@ -138,13 +155,15 @@
         }
     });
   });
-
+  let pause = false;
     let seconds = 1;
     const timerElement = document.getElementById("count");
   
     const interval = setInterval(() => {
-      timerElement.textContent = "TIME: " + seconds + "s";
-      seconds++;
+      if (!pause) {
+    timerElement.textContent = "TIME: " + seconds + "s";
+    seconds++;
+  }
 
     }, 1000);
   </script>
@@ -159,7 +178,10 @@
   const lastDiv = document.querySelector('[data-index="24"]');
   return lastDiv.textContent === '';
 }
-
+    const pausebutton = document.getElementById('pause')
+    pausebutton.addEventListener("click", () => {
+  pause = !pause;
+});
   </script>
 </body>
 </html>
