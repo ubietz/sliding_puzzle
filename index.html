@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Game</title>
+  <style>
+    .game {
+        display: block;
+        margin: auto;
+        width: 580px;
+        height: 580px;
+    }
+    #grid {
+      display: grid;
+      grid-template-columns: repeat(5, 100px);
+      grid-template-rows: repeat(5, 100px);
+      gap: 20px;
+      width: max-content;
+      margin: 20px auto;
+    }
+    #grid > div {
+      background: #FFE0B5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 50px;
+      width: 100px;
+      height: 100px;
+      cursor: pointer;
+      border: 20px solid #F8C794;
+      border-radius: 20px;
+      color: #DDA15C;
+      font-family: sans-serif;
+      font-weight: bold;
+      user-select: none;
+    }
+    .text {
+        font-size: 50px;
+        color: #DDA15C;
+        font-family: sans-serif;
+        margin: auto;
+        margin-left: 20px;
+        text-align: center;
+        user-select: none;
+    }
+    .timer {
+        width: 580px;
+        height: 100px;
+        background-color: #FFE0B5;
+        border: 20px solid #F8C794;
+        border-radius: 20px;
+        user-select: none;
+    }
+    .count {
+        font-family: sans-serif;
+        font-size: 75px;
+        color: #DDA15C;
+        text-align: center;
+        margin: auto;
+    }
+  </style>
+</head>
+<body>
+    
+<div class="game">
+    <br>
+    <div class="timer">
+        <h1 class="count" id="count">TIME:</h1>
+    </div>
+<div id="grid">
+
+  <div></div><div></div><div></div><div></div><div></div>
+  <div></div><div></div><div></div><div></div><div></div>
+  <div></div><div></div><div></div><div></div><div></div>
+  <div></div><div></div><div></div><div></div><div></div>
+  <div></div><div></div><div></div><div></div><div></div>
+</div>
+</div>
+<script>
+
+  function createUniqueRandomGenerator(min, max) {
+    const used = new Set();
+    return function getUniqueRandom() {
+      if (used.size >= (max - min + 1)) return null;
+      let num;
+      do {
+        num = Math.floor(Math.random() * (max - min + 1)) + min;
+      } while (used.has(num));
+      used.add(num);
+      return num;
+    };
+  }
+
+  const getUniqueRandom = createUniqueRandomGenerator(1, 24);
+
+  const gridItems = document.querySelectorAll('#grid > div');
+
+
+  gridItems.forEach((div, index) => {
+    if (index < 24) {
+      div.textContent = getUniqueRandom();
+    } else {
+      div.textContent = ''; 
+    }
+    div.dataset.index = index; 
+  });
+
+
+  function tryMove(index) {
+    const gridSize = 5;
+    const current = document.querySelector(`[data-index="${index}"]`);
+    const neighborOffsets = [-1, 1, -gridSize, gridSize];
+
+    for (const offset of neighborOffsets) {
+      const neighborIndex = index + offset;
+
+      if (neighborIndex < 0 || neighborIndex >= 25) continue;
+      if (offset === -1 && index % gridSize === 0) continue; 
+      if (offset === 1 && (index + 1) % gridSize === 0) continue;
+
+      const neighbor = document.querySelector(`[data-index="${neighborIndex}"]`);
+      if (neighbor && neighbor.textContent === '') {
+        neighbor.textContent = current.textContent;
+        current.textContent = '';
+        break;
+      }
+    }
+  }
+    let win = false;
+  gridItems.forEach((div) => {
+    const time = document.getElementById("count");
+    div.addEventListener('click', () => {
+      const index = parseInt(div.dataset.index);
+      tryMove(index);
+      if (checkWin()) {
+      time.textContent = "You Win!";
+      
+        }
+    });
+  });
+
+    let seconds = 1;
+    const timerElement = document.getElementById("count");
+  
+    const interval = setInterval(() => {
+      timerElement.textContent = "TIME: " + seconds + "s";
+      seconds++;
+
+    }, 1000);
+  </script>
+  <script>
+    function checkWin() {
+  for (let i = 0; i < 24; i++) {
+    const div = document.querySelector(`[data-index="${i}"]`);
+    if (div.textContent !== String(i + 1)) {
+      return false;
+    }
+  }
+  const lastDiv = document.querySelector('[data-index="24"]');
+  return lastDiv.textContent === '';
+}
+
+  </script>
+</body>
+</html>
